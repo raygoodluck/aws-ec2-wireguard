@@ -12,11 +12,12 @@ resource "aws_instance" "example" {
     source      = "templates/remote-script.sh"
     destination = "/tmp/script.sh"
   }
+
   provisioner "remote-exec" {
     inline = [
       "chmod +x /tmp/script.sh",
       "sudo sed -i -e 's/\r$//' /tmp/script.sh", # Remove the spurious CR characters.
-      "sudo /tmp/script.sh",
+      "sudo /tmp/script.sh ${self.public_ip}",
     ]
   }
 

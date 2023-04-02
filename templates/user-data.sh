@@ -12,14 +12,19 @@ echo "start install nginx"
 # yum update
 # yum -y install nginx
 amazon-linux-extras install -y nginx1
-amazon-linux-extras install -y epel
-yum install -y kmod-wireguard wireguard-tools
+
+
 
 # make sure nginx is started
 # service nginx start
 systemctl start nginx
 echo "end start nginx"
 
+
+# Begin wireguard
+function setWireguard(){
+amazon-linux-extras install -y epel
+yum install -y kmod-wireguard wireguard-tools
 cat > /etc/wireguard/wg0.conf << EOF
 [Interface]
 Address = ${wg_server_net}
@@ -31,12 +36,9 @@ PostDown = iptables -D FORWARD -i %i -j ACCEPT; iptables -D FORWARD -o %i -j ACC
 # PostUp = iptables -I FORWARD -s ${wg_server_net} -i wg0 -d ${wg_server_net} -j ACCEPT
 # PostUp = iptables -I FORWARD -s ${wg_server_net} -i wg0 -d ${lan_net} -j ACCEPT
 # PostUp = iptables -I FORWARD -s ${lan_net} -i wg0 -d ${wg_server_net} -j ACCEPT
- 
- 
 # PostDown = iptables -D FORWARD -s ${wg_server_net} -i wg0 -d ${wg_server_net} -j ACCEPT
 # PostDown = iptables -D FORWARD -s ${wg_server_net} -i wg0 -d ${lan_net} -j ACCEPT
 # PostDown = iptables -D FORWARD -s ${lan_net} -i wg0 -d ${wg_server_net} -j ACCEPT
- 
 
 ${peers}
 EOF
@@ -56,13 +58,25 @@ sysctl -p
 # ufw --force enable
 systemctl enable wg-quick@wg0.service
 systemctl start wg-quick@wg0.service
+}
 
-# install docker for running http proxy squid
+# setWireguard()
+# End wireguard
+
 yum install -y docker
 systemctl enable docker
 systemctl start docker
-docker pull ubuntu/squid
-docker run -d --name squid-container -e TZ=UTC -p 3128:3128 ubuntu/squid
+
+
+# install docker for running http proxy squid
+
+# docker pull ubuntu/squid
+# docker run -d --name squid-container -e TZ=UTC -p 3128:3128 ubuntu/squid
+
+
 
 hostname -I
 ifconfig
+
+
+

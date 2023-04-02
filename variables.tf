@@ -19,16 +19,19 @@ variable "INSTANCE_USERNAME" {
 # }
 
 variable "AWS_REGION" {
-  default = "ap-northeast-1"
-  #   default = "us-west-1"
+  default = "ap-southeast-1" // 新加坡
+  # default = "ap-northeast-1" //日本
+  # default = "us-west-1"
 }
 variable "AMIS" {
   type = map(string)
   default = {
-    us-east-1      = "ami-13be557e"
-    us-west-1      = "ami-0925fd223898ee5ba"
+    us-east-1 = "ami-13be557e"
+    # us-west-1      = "ami-0925fd223898ee5ba"
+    us-west-1      = "ami-07bc04fdc13241142"
     eu-west-1      = "ami-0d729a60"
     ap-northeast-1 = "ami-030cf0a1edb8636ab"
+    ap-southeast-1 = "ami-0bf97847fcd5c9f57"
   }
 }
 
